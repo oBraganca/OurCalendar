@@ -1,0 +1,155 @@
+
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+    <div id='calendar'></div>
+
+
+
+    {{ form }}
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Novo Evento</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% csrf_token %}
+          <div class="modal-body">
+            {{ form.name_event }}
+            {{ form.description }}
+            {{ form.date_start }}
+            {{ form.date_end }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Criar Evento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    var cont = 0;
+    var calendarEl = document.getElementById('calendar');
+    var calendarios = new Array();
+    calendarios.push(calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      timeZone: 'UTC',
+      dayMaxEventRows: 2,
+      height: "100%",
+      id_calendario: 1,
+      customButtons: {
+        viw: {
+          text: 'lista/Dias',
+          click: function() {
+            if(cont % 2 == 0){
+              calendar.changeView('listWeek');
+              
+            }else{
+              calendar.changeView('dayGridMonth');
+              calendar.render();
+            }
+            
+            cont++
+          }
+        },
+
+        addEvent:{
+          text:'Evento+',
+          click: function(){
+
+            $('#exampleModal').modal('show');
+            
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('New message to ' + recipient)
+            modal.find('.modal-body input').val(recipient)
+          }
+        },
+
+        removeEvent:{
+          text: 'Evento-',
+          click: function() {
+            var id = prompt('digie o id do evento que será excluido.');
+            var evento = calendar.getEventById(id)
+            evento.remove();
+          }
+        }
+      },
+      headerToolbar: {
+        left: 'today viw addEvent',
+        center: 'title',
+        right: 'removeEvent prev,next'
+      },
+      
+
+      events:{{ events|safe }},
+      
+      eventClick: function(info) {
+        alert('Titulo: ' + info.event.title);
+        alert('Começo: ' + info.event.start);
+        alert('ID: ' + info.event.id);
+        alert('Descrição: ' + info.event.extendedProps.description);
+        alert('Departamento: ' + info.event.extendedProps.department);
+        alert('id_calendario_pertecente: ' + info.event.id_calendario_pertecente);
+        
+       
+      },
+      eventDidMount: function(info) {
+        console.log(info.event.extendedProps);
+       
+    
+      }
+              
+    }));
+    calendarios.push(calendar1 = new FullCalendar.Calendar(calendarEl,{
+      initialView: 'dayGridMonth',
+      timeZone: 'UTC',
+      dayMaxEventRows: 2,
+      height: "100%",
+      id_calendario: 2
+
+      
+    }))
+
+    
+
+    
+    var contador = 1;
+    calendarios[0].render();
+    var event = calendarios[0].getEventById('a') 
+    var start = event.start
+    console.log(start.toISOString())
+    
+    document.getElementById('addEvent').addEventListener('click',function(){
+      var id = prompt("digite o id do calendario que deseja adicionar os eventos ao seu");
+
+      for(var i = 0; i < calendarios.length; i++){
+        if(calendarios[i].getOption('id_calendario') == id){
+          var id_atual = prompt("digite o id do seu calendario");
+          for(var j = 0; j < calendarios.length; j++){
+            if(calendarios[j].getOption('id_calendario') == id_atual){
+              calendarios[i].addEvent(calendarios[j].getEventById('a'));
+            }
+          }
+        }
+      }
+    });
+
+  });
+
+    </script>
+{% endblock %}

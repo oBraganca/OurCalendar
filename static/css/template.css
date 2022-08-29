@@ -23,6 +23,11 @@ body{
     overflow:auto;
 }
 
+.container-fluid{
+    padding: 0;
+}
+
+
 .container-main{
 
     position: relative;
@@ -249,3 +254,8 @@ body{
 
   
   
+
+  .content{
+      margin-left: 23%;
+      margin-right: 2%;
+  }

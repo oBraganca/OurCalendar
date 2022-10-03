@@ -1,1 +1,1 @@
-from .viewTemplate import TemplateView
+from .viewTemplate import TemplateView, create_event

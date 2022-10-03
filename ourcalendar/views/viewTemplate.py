@@ -2,18 +2,29 @@ from django.views.generic import View
 from django.shortcuts import render, redirect
 from ourcalendar.models import Events, OurCalendar
 from ourcalendar.forms import EventAdd
+from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy, reverse
+from users.models import CustomUser
+from django.contrib.auth import authenticate, login, logout
 
-
-class TemplateView(View):
+class TemplateView(LoginRequiredMixin, View):
     template_name = 'template/calendar.html'
+
+
+    login_url = '/account/'
 
     def get(self, request, *args, **kwargs):
         
-        forms = EventAdd
+        forms = EventAdd()
 
         calendar = OurCalendar.objects.filter(user=request.user)
         events = Events.objects.filter(calendar__in=calendar)
-        
+
+        user_ = CustomUser.objects.get(email=request.user)
+        picture_profile = user_.first_name[0]        
+
         event_list = []
         for event in events:
             event_list.append(
@@ -25,19 +36,30 @@ class TemplateView(View):
                 }
             )
 
+        print(forms)
+        context = {'form': forms, 'events':event_list, 'user_info':user_, "pictureProfile":picture_profile}
 
+        return render(request, self.template_name, context)
 
-        return render(request, self.template_name, {'form': forms, 'events':event_list})
+@login_required
+def create_event(request):
+    form = EventAdd(request.POST or None)
 
-    def post(self, request, *args, **kwargs):
-        forms = self.form_class(request.POST)
-        if forms.is_valid():
-            email_ = forms.cleaned_data["email"]
-            password_ = forms.cleaned_data["password"]
-            user = authenticate(email = email_, password = password_)
+    if request.POST and form.is_valid():
+        title = form.cleaned_data["name"]
+        description = form.cleaned_data["description"]
+        start_time = form.cleaned_data["date_start"]
+        end_time = form.cleaned_data["date_end"]
+        calendar = OurCalendar.objects.get(user=request.user)
 
-            if user:
-                login(request, user)
-                return redirect()
-        context = {"form": forms}
-        return render(request,self.template_name,context)
+        Events.objects.create(
+            name=title,
+            description=description,
+            date_start=start_time,
+            date_end=end_time,
+            calendar=calendar,
+            origim=calendar,
+
+        )
+        return HttpResponseRedirect(reverse("ourcalendar:template"))
+    return HttpResponseRedirect(reverse("ourcalendar:template"))

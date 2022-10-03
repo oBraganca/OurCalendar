@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="{% static '/Css/Login.css' %}">
+    <link rel="stylesheet" href="{% static '/css/Login.css' %}">
     <link rel="stylesheet" href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
     <link rel="stylesheet" href='https://unicons.iconscout.com/release/v2.1.9/css/unicons.css'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,7 @@
             <div class="row full-height justify-content-center">
                 <div class="col-12 text-center align-self-center py-5" style="display: flex; justify-content: center;">
                     <div class="section pb-5 pt-4 p5-sm-2 text-center back">
-                        <img src="{% static '/Img/Logo.png' %}" class="logo" alt="Logo">
+                        <img src="{% static '/img/Logo.png' %}" class="logo" alt="Logo">
                         <h6 class="mb-0 pb-3" style="color: #2a2b38">
                             <Span>Conectar</Span>
                             <Span>Inscrever</Span>
@@ -30,53 +30,60 @@
                             <div class="card-3d-wrapper">
 
                                 <div class="card-front">
-                                    {% csrf_token %}
-                                    <div class="center-wrap">
-                                        <div class="section text-center">
-                                            <h4 class="mb-2 pb-3" style="color: #c4c3ca">Conectar</h4>
-                                            <div class="form-group">
-                                                {{ form.email }}
-                                                <i class="input-icon uil uil-at"></i>
+
+                                    <form method="POST" action="" >
+                                        {% csrf_token %}
+                                        <div class="center-wrap">
+                                            <div class="section text-center">
+                                                <h4 class="mb-2 pb-3" style="color: #c4c3ca">Conectar</h4>
+                                                <div class="form-group">
+                                                    {{ form.email }}
+                                                    <i class="input-icon uil uil-at"></i>
+                                                </div>
+                                                <div class="form-group mt-2">
+                                                    {{ form.password }}
+                                                    <i class="input-icon uil uil-lock-alt"></i>
+                                                </div>
+                                                
+                                                <input type="submit" class="btn mt-4" style="padding-top: 8px;" value="Enviar">
+                                                <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Esqueceu sua senha?</a></p>
                                             </div>
-                                            <div class="form-group mt-2">
-                                                {{ form.password }}
-                                                <i class="input-icon uil uil-lock-alt"></i>
-                                            </div>
-                                            <a href="#" class="btn mt-4" style="padding-top: 8px;">Enviar</a>
-                                            <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Esqueceu sua senha?</a></p>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
 
                                 <div class="card-back">
-                                    {% csrf_token %}
-                                    <div class="center-wrap">
-                                        <div class="section text-center">
-                                            <h4 class="mb-4 pb-3" style="color: #c4c3ca">Inscrever</h4>
-                                            <div class="form-group">
-                                                {{ form.first_name }}
-                                                <i class="input-icon uil uil-user"></i>
-                                            </div><div class="form-group">
-                                                {{ form.last_name }}
-                                                <i class="input-icon uil uil-user"></i>
+                                    <form action="register/" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="center-wrap">
+                                            <div class="section text-center">
+                                                <h4 class="mb-4 pb-3" style="color: #c4c3ca">Inscrever</h4>
+                                                <div class="form-group">
+                                                    {{ form2.first_name }}
+                                                    <i class="input-icon uil uil-user"></i>
+                                                </div><div class="form-group">
+                                                    {{ form2.last_name }}
+                                                    <i class="input-icon uil uil-user"></i>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group mt-2">
+                                                    {{ form2.email }}
+                                                    <i class="input-icon uil uil-at"></i>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group mt-2">
+                                                    {{ form2.password }}
+                                                    <i class="input-icon uil uil-lock-alt"></i>
+                                                </div>
+                                                <div class="form-group mt-2">
+                                                    {{ form2.confirmPassword }}}
+                                                    <i class="input-icon uil uil-lock-alt"></i>
+                                                </div>
+                                                <input type="submit" class="btn mt-4" style="padding-top: 8px;" value="Enviar">
                                             </div>
-                                            <hr>
-                                            <div class="form-group mt-2">
-                                                {{ form.email }}
-                                                <i class="input-icon uil uil-at"></i>
-                                            </div>
-                                            <hr>
-                                            <div class="form-group mt-2">
-                                                {{ form.password }}
-                                                <i class="input-icon uil uil-lock-alt"></i>
-                                            </div>
-                                            <div class="form-group mt-2">
-                                                {{ form.confirmPassword }}}
-                                                <i class="input-icon uil uil-lock-alt"></i>
-                                            </div>
-                                            <a href="#" class="btn mt-4" style="padding-top: 8px;">Enviar</a>
                                         </div>
-                                    </div>
+
+                                    </form>
                                 </div>
                             </div>
                         </div>

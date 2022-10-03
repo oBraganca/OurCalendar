@@ -1,15 +1,18 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% load crispy_forms_tags %}
 {% block title %}Calendar{% endblock %}
+
+{% block pagestatic %}
+  <script src='{% static "js/calendar.js" %}'></script>
+{%  endblock %}
 
 {% block content %}
     <div id='calendar'></div>
 
 
 
-    {{ form }}
 
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -20,17 +23,19 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          {% csrf_token %}
-          <div class="modal-body">
-            {{ form.name_event }}
-            {{ form.description }}
-            {{ form.date_start }}
-            {{ form.date_end }}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Criar Evento</button>
-          </div>
+          <form method="POST" action="/addEvent/">
+  
+              <div class="modal-body " >
+                {% csrf_token %}    
+                {% crispy form %}
+              </div>
+  
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-success" value="Criar Evento">
+            </div>
+
+          </form>
         </div>
       </div>
     </div>
@@ -38,7 +43,9 @@
     
     <script>
 
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
+
+
     var cont = 0;
     var calendarEl = document.getElementById('calendar');
     var calendarios = new Array();
@@ -70,13 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             $('#exampleModal').modal('show');
             
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var recipient = button.data('whatever') // Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var modal = $(this)
-            modal.find('.modal-title').text('New message to ' + recipient)
-            modal.find('.modal-body input').val(recipient)
           }
         },
 
@@ -148,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     });
-
   });
 
     </script>

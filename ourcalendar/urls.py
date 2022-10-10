@@ -6,7 +6,7 @@ app_name = 'ourcalendar'
 
 urlpatterns = [
     path("", views.TemplateView.as_view(), name="template"),
-    path("share", views.TemplateQR.as_view(), name="share"),
+    path("share/", views.TemplateQR.as_view(), name='share'),
     path("addEvent/", views.create_event, name="newEvent"),
     path('account/',include('users.urls', namespace="users"))
 ]

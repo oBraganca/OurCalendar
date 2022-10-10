@@ -34,29 +34,8 @@ class TemplateQR(LoginRequiredMixin, View):
         stream = BytesIO()
         img.save(stream)
 
-        context = {'svg': stream.getvalue().decode()}
+        print(request.META['HTTP_HOST'])
+        context = {'svg': stream.getvalue().decode(), 'user_info':user_, "pictureProfile":picture_profile}
 
         return render(request, self.template_name, context)
 
-@login_required
-def create_event(request):
-    form = EventAdd(request.POST or None)
-
-    if request.POST and form.is_valid():
-        title = form.cleaned_data["name"]
-        description = form.cleaned_data["description"]
-        start_time = form.cleaned_data["date_start"]
-        end_time = form.cleaned_data["date_end"]
-        calendar = OurCalendar.objects.get(user=request.user)
-
-        Events.objects.create(
-            name=title,
-            description=description,
-            date_start=start_time,
-            date_end=end_time,
-            calendar=calendar,
-            origim=calendar,
-
-        )
-        return HttpResponseRedirect(reverse("ourcalendar:template"))
-    return HttpResponseRedirect(reverse("ourcalendar:template"))

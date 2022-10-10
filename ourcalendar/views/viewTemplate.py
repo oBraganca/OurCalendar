@@ -36,8 +36,7 @@ class TemplateView(LoginRequiredMixin, View):
                 }
             )
 
-        print(forms)
-        context = {'form': forms, 'events':event_list, 'user_info':user_, "pictureProfile":picture_profile}
+        context = {'form': forms, 'events':event_list, 'user_info':user_, "pictureProfile":picture_profile, "domain":request.META['HTTP_HOST']}
 
         return render(request, self.template_name, context)
 

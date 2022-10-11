@@ -15,6 +15,7 @@ class TemplateView(LoginRequiredMixin, View):
 
     login_url = '/account/'
 
+
     def get(self, request, *args, **kwargs):
         
         forms = EventAdd()

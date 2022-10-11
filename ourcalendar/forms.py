@@ -34,3 +34,7 @@ class EventAdd(ModelForm):
                 attrs={"type": "datetime-local", "class": "form-control mb-3"}
             ),
         }
+
+class MergeEvents(forms.Form):
+    de = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))
+    calendario_id = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control', 'id':'recipient-name'}))

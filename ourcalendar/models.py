@@ -46,7 +46,7 @@ class Events(models.Model):
     visible = models.BooleanField(default=True)
     calendar = models.ForeignKey(OurCalendar, on_delete=models.CASCADE)
     origim = models.ForeignKey(OurCalendar,  on_delete=models.CASCADE, related_name="+")
-    unic_code = models.CharField(max_length=255, blank=True);
+    unic_code = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name

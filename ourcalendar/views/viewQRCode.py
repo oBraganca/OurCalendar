@@ -1,18 +1,16 @@
-from calendar import Calendar, calendar
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from ourcalendar.models import Events, OurCalendar
 from ourcalendar.forms import EventAdd, MergeEvents
-from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy, reverse
 from users.models import CustomUser
 from io import BytesIO
 
 import qrcode
 import qrcode.image.svg
-import datetime
+
+
+
 class TemplateQR(LoginRequiredMixin, View):
     template_name = 'template/calendarQR.html'
 
@@ -71,7 +69,8 @@ class MergeCalendar(LoginRequiredMixin, View):
 
             calendar = OurCalendar.objects.get(user = request.user)
             for event in events:
-                eventTest = Events.objects.filter(calendar__in=str(calendar.id), unic_code = event.unic_code)
+                # eventTest = Events.objects.filter(calendar__in=str(calendar.id), date_end__gte=datetime.datetime.now()).exclude(unic_code = event.unic_code)
+                eventTest = Events.objects.filter(calendar__in=str(calendar.id), unic_code = event.unic_code)        
                 if not eventTest:
                     Events.objects.create(name=event.name, description=event.description, date_start = event.date_start, date_end = event.date_end, calendar = calendar, origim = event.origim, unic_code=event.unic_code)
 

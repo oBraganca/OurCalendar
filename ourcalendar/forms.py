@@ -5,15 +5,21 @@ from .models import Events
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, MultiField, Div, Row, Column
 
+ACCESS = (
+    ('PB', 'Public'),
+    ('PV', 'Private')
+)
+
 class EventAdd(ModelForm):
     class Meta:
         model = Events
-        fields = ["name", "description", "date_start", "date_end"]
+        fields = ["name", "description", "date_start", "date_end", "access"]
         labels = {
             'name': _('Title'),
             'description': _('Description'),
             'date_start': _('Start'),
             'date_end': _('End'),
+            'access': _('Access'),
         }
         # datetime-local is a HTML5 input type
         
@@ -34,6 +40,7 @@ class EventAdd(ModelForm):
                 attrs={"type": "datetime-local", "class": "form-control mb-3"}
             ),
         }
+        access = forms.ChoiceField(choices=ACCESS)
 
 class MergeEvents(forms.Form):
     de = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))

@@ -1,14 +1,11 @@
 from django.views.generic import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from ourcalendar.models import Events, OurCalendar
 from ourcalendar.forms import EventAdd
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from users.models import CustomUser
-from django.contrib.auth import authenticate, login, logout
-
 class TemplateView(LoginRequiredMixin, View):
     template_name = 'template/calendar.html'
 
@@ -40,8 +37,32 @@ class TemplateView(LoginRequiredMixin, View):
         context = {'form': forms, 'events':event_list, 'user_info':user_, "pictureProfile":picture_profile, "domain":request.META['HTTP_HOST']}
 
         return render(request, self.template_name, context)
+    
+    
+    # @classmethod
+    # def updateEvent(self, request, *args, **kwargs):
+    #     form = EventAdd(request.POST or None)
 
-@login_required
+    #     if request.POST and form.is_valid():
+    #         title = form.cleaned_data["name"]
+    #         description = form.cleaned_data["description"]
+    #         start_time = form.cleaned_data["date_start"]
+    #         end_time = form.cleaned_data["date_end"]
+    #         calendar = OurCalendar.objects.get(user=request.user)
+
+    #         Events.objects.create(
+    #             name=title,
+    #             description=description,
+    #             date_start=start_time,
+    #             date_end=end_time,
+    #             calendar=calendar,
+    #             origim=calendar,
+
+    #         )
+    #         return HttpResponseRedirect(reverse("ourcalendar:template"))
+    #     return HttpResponseRedirect(reverse("ourcalendar:template"))
+    
+
 def create_event(request):
     form = EventAdd(request.POST or None)
 
@@ -61,5 +82,31 @@ def create_event(request):
             origim=calendar,
 
         )
+        return HttpResponseRedirect(reverse("ourcalendar:template"))
+    return HttpResponseRedirect(reverse("ourcalendar:template"))
+
+def edit_event(request):
+    form = EventAdd(request.POST)
+
+    if request.POST and form.is_valid():
+        unic_code = request.POST.get("code")
+        id = request.POST.get("id")
+        
+        title = form.cleaned_data["name"]
+        description = form.cleaned_data["description"]
+        start_time = form.cleaned_data["date_start"]
+        end_time = form.cleaned_data["date_end"]
+
+        Events.objects.filter(
+            id = id,
+            unic_code = unic_code 
+        ).update(
+            name=title,
+            description=description,
+            date_start=start_time,
+            date_end=end_time,
+            
+        )
+        
         return HttpResponseRedirect(reverse("ourcalendar:template"))
     return HttpResponseRedirect(reverse("ourcalendar:template"))

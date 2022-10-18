@@ -41,7 +41,10 @@
 .layout-inside .left h5{
     color: rgb(182, 182, 182);
 }
-
+.layout-inside .left button{
+    margin-bottom: 3rem;
+    width: 70%;
+}
 .layout-inside .left{
     text-align: center;
 }
@@ -55,4 +58,20 @@
     height: 30%;
     display: flex;
     justify-content: center;
+}
+.button-code{
+    width: 100%;
+    height: 30%;
+    display: flex;  
+    flex-direction: column;
+}
+
+.button-code button{
+    width: 100%;
+    height: 30%;
+    margin-bottom: 1rem;
+}
+
+.btn-dark{
+    box-shadow: 2px 1px 1px rgba(122, 99, 255, 0.25);
 }

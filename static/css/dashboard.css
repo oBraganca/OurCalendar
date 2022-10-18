@@ -1,0 +1,73 @@
+.content-dashboard{
+    width: 100%;
+    height: 100%;
+    margin-top: 6%;
+}
+
+.display-info{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 6%;
+}
+.card-item{
+    width: calc(80%/3);
+    height: 100%;
+    display: flex;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+}
+.card-item .item-text{
+    color: white;
+    width: 60%;
+    padding-left: 5%;
+}
+.card-item .item-icon{
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-item .item-icon svg{
+    width: 70%;
+
+}
+
+.in-time{
+    background: #FF6262;
+    box-shadow: 3px 4px 4px rgba(255, 255, 255, 0.25);
+}
+.out-time{   
+    background: #FF66C2;
+    box-shadow: 3px 4px 4px rgba(255, 255, 255, 0.25);
+}
+
+.merged{
+    background: #87A9FF;
+    box-shadow: 3px 4px 4px rgba(255, 255, 255, 0.25);
+}
+
+#table_info, #table_length, #table_paginate, #dataTables_filter{
+    color: white;
+}
+.table{
+    color: white;
+    background: linear-gradient(180deg, #1E1E1E 99.99%, rgba(0, 0, 0, 0.57) 100%);
+    border: none;
+}
+.head{
+    background: #2C2C2C;
+}
+.table tr th, td{
+    
+    border: none;
+}
+
+tbody tr td{
+    background: linear-gradient(180deg, #1E1E1E 99.99%, rgba(0, 0, 0, 0.57) 100%);
+    border: none !important;
+}

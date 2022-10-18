@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% block title %}Calendar{% endblock %}
+
+{% block pagestatic %}
+    <link href='{% static "css/dashboard.css" %}' rel='stylesheet' />
+    <script src='{% static "js/dashboard.js" %}'></script>
+{%  endblock %}
+{% block content %}
+    <div class="content-dashboard">
+        <div class="display-info">
+            <div class="card-item in-time">
+                <div class="item-text">
+                    
+                    <p><h1>{{active}}</h1></p>
+                    <p>Eventos Pendentes</p>
+                    
+                </div>
+                <div class="item-icon">
+                    <svg width="105" height="105" viewBox="0 0 105 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M102.406 52.8C102.406 80.4162 80.0227 102.8 52.4065 102.8C24.7903 102.8 2.40649 80.4162 2.40649 52.8C2.40649 25.1838 24.7903 2.79999 52.4065 2.79999C80.0227 2.79999 102.406 25.1838 102.406 52.8Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path opacity="0.4" d="M70.9558 68.7048L50.5774 56.548V30.348" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+            </div>
+
+            <div class="card-item out-time">
+                <div class="item-text">
+                    <p><h1>{{ending}}</h1></p>
+                    <p>Eventos Terminados</p>
+                </div>
+                <div class="item-icon">
+                    <svg width="105" height="104" viewBox="0 0 105 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.4" d="M80.3445 101.997V18.6179" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M102.893 76.917L80.344 102L57.7947 76.917" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path opacity="0.4" d="M25.4421 2.00336V85.382" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.89331 27.083L25.4427 2L47.992 27.083" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                        
+                </div>
+
+            </div>
+
+            <div class="card-item merged">
+                <div class="item-text">
+
+                    <p><h1>{{merged}}</h1></p>
+                    <p>Total de Mesclagens</p>
+
+                </div>
+                <div class="item-icon">
+                    <svg width="105" height="94" viewBox="0 0 105 94" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M102.594 51.296H2.59448" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path opacity="0.4" d="M93.6912 29.3459V19.2283C93.6912 9.75108 86.6117 2 77.9557 2H70.1772" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path opacity="0.4" d="M11.4988 29.3459V19.2065C11.4988 9.71309 18.5237 2.01628 27.1946 2.00543L35.1466 2" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M93.691 51.296V74.7718C93.691 84.2435 86.6115 92 77.9555 92H70.177" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M11.4988 51.296V74.7935C11.4988 84.2869 18.5237 91.9837 27.1946 91.9946L35.1466 92" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                        
+                </div>
+
+            </div>
+        </div>
+        <table id = "table" class = "table table-bordered">
+            <thead class="head ">
+                <tr>
+                    <th>Titulo</th>
+                    <th>Tempo de Início</th>
+                    <th>Tempo de Termino</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% csrf_token %}    
+                {% for event in events %}
+                <tr>
+                    <td>{{event.name}}</td>
+                    <td>{{event.date_start}}</td>
+                    <td>{{event.date_end}}</td>
+                    <td>
+                        <button type="button" data-attr="edit" id="{{event.id}}" class="btn btn-light">Edit</button>
+                        <button type="button" data-attr="exclude" id="{{event.id}}" class="btn btn-danger">Exclude</button>    
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="modal" id="modal"tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            
+            <form method="POST" action="/editEvent/">
+                {% csrf_token %}    
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-success" value="Salvar Mudanças">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>  
+            </form>
+          </div>
+        </div>
+      </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <input type="submit" id="excludeEvent" class="btn btn-danger" value="Excluir">
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,12 +3,13 @@ from django.db.models.signals import pre_save
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django import forms
 
 from users.models import CustomUser
 
 import random
 import string
-import math
+import datetime
 
 
 class OurCalendar(models.Model):
@@ -38,6 +39,11 @@ def pre_save_create_id(sender, instance, *args, **kwargs):
 
 
 
+ACCESS = (
+    ('PB', 'Public'),
+    ('PV', 'Private')
+)
+
 class Events(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -47,6 +53,7 @@ class Events(models.Model):
     calendar = models.ForeignKey(OurCalendar, on_delete=models.CASCADE)
     origim = models.ForeignKey(OurCalendar,  on_delete=models.CASCADE, related_name="+")
     unic_code = models.CharField(max_length=255, blank=True)
+    access = models.CharField(max_length=255, choices=ACCESS, blank=False, null=False)
 
     def __str__(self):
         return self.name

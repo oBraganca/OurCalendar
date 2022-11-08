@@ -1,9 +1,2 @@
-# this hidden folder contains your local, virtual environment
 
-# this hidden file contains sensitive keys and environmental config vars
-# if you've named your primary project folder something other than
-# 'example' please adjust the following line as needed 
-myTCC/.env
-
-# this token contains your sensitive google service account info
-google-credentials.json
+__pycache__

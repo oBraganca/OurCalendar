@@ -12,6 +12,9 @@ class SignInView(View):
     def get(self, request, *args, **kwargs):
         forms = self.form_class()
         forms2 = self.form_class2()
+        if 'forms2' in request.session:
+            forms2 = self.form_class2(request.session['forms2'])
+            del request.session['forms2']
         context = {"form": forms, "form2": forms2}
         return render(request, self.template_name, context)
 

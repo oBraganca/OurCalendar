@@ -30,7 +30,7 @@
                 {% crispy form %}
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <input type="submit" class="btn btn-success" value="Criar Evento">
+                  <input type="submit" class="btn btn-success" id="createEvent" value="Criar Evento">
                 </div>
               </div>
   
@@ -43,11 +43,104 @@
     
     <script>
 
+
+
+
+
+
+
+
+
+
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  
+    const chatSocket = new WebSocket('ws://'+ window.location.host+'/ws/sendEvent/');
+  
+    chatSocket.onopen = function(message) {
+      console.log("open", message);
+    }
+  
+    chatSocket.onerror = function(message) {
+        console.log("error", message);
+    }
+  
+    chatSocket.onclose = function(message) {
+        console.log("close", message);
+    }
+  
+  
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+  
+        if (data) {
+          calendar.addEvent(data);
+          calendar.render();
+          
+        } else {
+            alert('The message was empty!')
+        }
+  
+    };
+  
+    document.querySelector('#createEvent').onclick = function(e) {
+        
+        e.preventDefault();
+  
+        var title = $("input[name='name']").val();
+        var description = $("textarea[name='description']").val();
+        var date_start = $("input[name='date_start']").val();
+        var date_end = $("input[name='date_end']").val();
+        var access = $("select[name='access'] option:selected").val();
+  
+  
+        chatSocket.send(JSON.stringify({
+            'title': title,
+            'description': description,
+            'date_start': date_start,
+            'date_end': date_end,
+            'access': access,
+            'idcalendar': 1
+        }));
+  
+  
+        return false
+    };
+
+
+
+
+
+
+
+
+
+
+
+
   document.addEventListener('DOMContentLoaded', function() {
 
+    event = {{events|safe}}
 
     var cont = 0;
-    var calendarEl = document.getElementById('calendar');
+    
     var calendarios = new Array();
     calendarios.push(calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -96,7 +189,7 @@
       },
       
 
-      events:{{ events|safe }},
+      events:event,
       
       eventClick: function(info) {
         alert('Titulo: ' + info.event.title);
@@ -109,7 +202,6 @@
        
       },
       eventDidMount: function(info) {
-        console.log(info.event.extendedProps);
        
     
       }
@@ -131,8 +223,6 @@
     var contador = 1;
     calendarios[0].render();
     var event = calendarios[0].getEventById('a') 
-    var start = event.start
-    console.log(start.toISOString())
     
     document.getElementById('addEvent').addEventListener('click',function(){
       var id = prompt("digite o id do calendario que deseja adicionar os eventos ao seu");
@@ -149,6 +239,6 @@
       }
     });
   });
-
+  
     </script>
 {% endblock %}

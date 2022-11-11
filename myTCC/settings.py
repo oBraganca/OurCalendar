@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'ourcalendar',
     'users',
+    'django_extensions',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -72,10 +74,14 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
+WSGI_APPLICATION = "myTCC.wsgi.application"
+ASGI_APPLICATION = "myTCC.asgi.application"
 
-WSGI_APPLICATION = 'myTCC.wsgi.application'
-
-
+CHANNEL_LAYERS = {
+    "default": {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 

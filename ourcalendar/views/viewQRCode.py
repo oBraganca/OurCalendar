@@ -30,7 +30,7 @@ class TemplateQR(LoginRequiredMixin, View):
 
 
         factory = qrcode.image.svg.SvgImage
-        img = qrcode.make(request.META['HTTP_HOST']+"/mergeClanedar/{0}/".format(list(idC)[0]), image_factory=factory, box_size=20)
+        img = qrcode.make(request.META['HTTP_HOST']+"/mergeCalendar/{0}/".format(list(idC)[0]), image_factory=factory, box_size=20)
         stream = BytesIO()
         img.save(stream)
 

@@ -1,1 +1,1 @@
-web: myTCC.asgi:application --host 0.0.0.0 --port 8080
+web: gunicorn myTCC.asgi

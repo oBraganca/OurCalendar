@@ -1,1 +1,1 @@
-web: gunicorn myTCC.asgi
+web: gunicorn myTCC.wsgi

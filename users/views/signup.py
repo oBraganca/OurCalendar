@@ -23,10 +23,10 @@ class SignUpView(View):
         forms2 = self.form_class2(request.POST)
         if forms2.is_valid():
             user = CustomUser.objects.create_user(
-                first_name=forms2.cleaned_data["first_name"], 
-                last_name=forms2.cleaned_data["last_name"], 
-                email=forms2.cleaned_data["email"],
-                password=forms2.cleaned_data["password"])
+                first_name=request.POST.get("first_name"), 
+                last_name=request.POST.get("last_name"), 
+                email=request.POST.get("email"),
+                password=request.POST.get("password"))
             
             OurCalendar.objects.create(user = user, qnt_merge = 0)
 

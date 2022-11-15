@@ -12,11 +12,17 @@ urlpatterns = [
     path("dashboard/", views.TemplateDashboard.as_view(), name='dashboard'),
     path("addEvent/", views.create_event, name="newEvent"),
     path("editEvent/", views.edit_event, name="newEvent"),
-    # path('account/',include('users.urls', namespace="users")),
+    path("all-calendars/", views.ListTemplateView.as_view(), name="calendars"),
+    path("all-calendars/<int:id>", views.TemplateViewFollow.as_view(), name="calendar-follow"),
     path('mergeCalendar/<int:id>',views.MergeCalendar.as_view(), name="template"),
     path("mergedCalendar/", views.MergeCalendar.as_view(), name="newEvent"),
+    
     path("getForm/", views.EventAjax.getForm),
     path("getInfo/", views.EventAjax.getInfo),
+    path("getCodeMerge/", views.EventAjax.getCode),
+    path("getUseCoder/", views.EventAjax.getFormCode),
+    path("mergeUseCode/", views.EventAjax.postFormCode),
+    
     path("favicon.ico",RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),),
     path("excludeEvent/", views.EventAjax.excludeEvent)
 ]

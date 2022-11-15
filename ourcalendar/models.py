@@ -13,6 +13,7 @@ import datetime
 
 
 class OurCalendar(models.Model):
+    name = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     qnt_merge = models.IntegerField()
 
@@ -57,6 +58,22 @@ class Events(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class RequestCalendarFollow(models.Model):
+    calendar = models.ForeignKey(OurCalendar, on_delete=models.CASCADE)
+    follower =  models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.follower)
+    
+class CalendarFollow(models.Model):
+    calendar = models.ForeignKey(OurCalendar, on_delete=models.CASCADE)
+    follower =  models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="follower")
+    qnt_merge = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return str(self.follower)
 
 
 pre_save.connect(pre_save_create_id, sender = Events)

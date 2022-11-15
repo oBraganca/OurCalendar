@@ -43,15 +43,6 @@
     
     <script>
 
-
-
-
-
-
-
-
-
-
     var calendarEl = document.getElementById('calendar');
 
     var calendar;
@@ -72,7 +63,7 @@
 
     
   
-    const chatSocket = new WebSocket('ws://'+ window.location.host+'/ws/sendEvent/');
+    const chatSocket = new WebSocket('ws://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
   
     chatSocket.onopen = function(message) {
       console.log("open", message);
@@ -117,7 +108,7 @@
             'date_start': date_start,
             'date_end': date_end,
             'access': access,
-            'idcalendar': 1
+            'idcalendar': {{idC}}
         }));
   
   
@@ -164,30 +155,43 @@
           }
         },
 
-        addEvent:{
-          text:'Evento+',
-          click: function(){
+        {% if main %}
+          addEvent:{
+            text:'Evento+',
+            click: function(){
 
-            $('#exampleModal').modal('show');
-            
-          }
-        },
+              $('#exampleModal').modal('show');
+              
+            }
+          },
 
-        removeEvent:{
-          text: 'Evento-',
-          click: function() {
-            var id = prompt('digie o id do evento que será excluido.');
-            var evento = calendar.getEventById(id)
-            evento.remove();
+          removeEvent:{
+            text: 'Evento-',
+            click: function() {
+              var id = prompt('digie o id do evento que será excluido.');
+              var evento = calendar.getEventById(id)
+              evento.remove();
+            }
           }
-        }
-      },
-      headerToolbar: {
-        left: 'today viw addEvent',
-        center: 'title',
-        right: 'removeEvent prev,next'
+        
+        {%endif%}
+
+        
       },
       
+      {% if main %}
+        headerToolbar: {
+          left: 'today viw addEvent',
+          center: 'title',
+          right: 'removeEvent prev,next'
+        },
+      {%else%}
+        headerToolbar: {
+          left: 'today viw',
+          center: 'title',
+          right: 'prev,next'
+        },
+      {%endif%}
 
       events:event,
       
@@ -201,10 +205,6 @@
         
        
       },
-      eventDidMount: function(info) {
-       
-    
-      }
               
     }));
     calendarios.push(calendar1 = new FullCalendar.Calendar(calendarEl,{

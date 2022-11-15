@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% block title %}Calendar{% endblock %}
+
+{% block pagestatic %}
+    <link href='{% static "css/calendarios.css" %}' rel='stylesheet' />
+    <script src='{% static "js/calendarios.js" %}'></script>
+{%  endblock %}
+{% block content %}
+    <div class="p-4">
+        {% if calendar_list|length > 0 %}
+        <div class="row row-cols-3">
+        {%for calendar in calendar_list%}
+        <div class="col mt-2">
+            <div class="card bg-dark text-light" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{calendar.title}}</h5>
+                    <p class="card-text">{{calendar.belongs}}' Calendar.</p>
+                    <a href="{{calendar.id}}" class="btn btn-primary">Go to Calendar</a>
+                </div>
+                </div>
+        </div>
+        {%endfor%}    
+        </div>
+        {%else%}
+            Parece que vc nao segue ninguem
+        {%endif%}
+        
+    </div>
+{% endblock %}

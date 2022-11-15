@@ -1,12 +1,12 @@
 
 from django.views.generic import View
 from django.shortcuts import render
-from ourcalendar.models import Events, OurCalendar
-from ourcalendar.forms import EventAdd
+from ourcalendar.models import Events, OurCalendar, CalendarFollow
+from ourcalendar.forms import EventAdd, GenerateCode, SendMergeCalendar
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from users.models import CustomUser
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse,JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django import forms
 
@@ -20,7 +20,6 @@ class TemplateDashboard(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         
-        forms = EventAdd()
 
         calendar = OurCalendar.objects.get(user=request.user)
         qnt_events = len(Events.objects.filter(calendar=calendar, date_end__gte=datetime.datetime.now()))
@@ -29,6 +28,29 @@ class TemplateDashboard(LoginRequiredMixin, View):
 
         user_ = CustomUser.objects.get(email=request.user)
         picture_profile = user_.first_name[0]
+        
+        
+        users = CalendarFollow.objects.all().prefetch_related("follower").filter(calendar = calendar).order_by('id')[:2]
+        user_main = CustomUser.objects.get(email = calendar.user.email) 
+        
+        users_list = []
+        
+        users_list.append({
+                    "first_name": user_main.first_name,
+                    "last_name": user_main.last_name,
+                    "main": True,
+                    })
+
+        for user in users:
+            users_list.append(
+                {
+                    "first_name": user.follower.first_name,
+                    "last_name": user.follower.last_name,
+                    "merged": user.qnt_merge,
+
+                }
+            )
+        
 
         context = {
                     'user_info':user_, 
@@ -36,7 +58,9 @@ class TemplateDashboard(LoginRequiredMixin, View):
                     'merged':calendar.qnt_merge, 
                     'active':qnt_events, 
                     'ending':qnt_end, 
-                    'events': events
+                    'events': events,
+                    "belongs":"Meu Calendario",
+                    "users":users_list
                     }
 
         return render(request, self.template_name, context)
@@ -44,12 +68,40 @@ class TemplateDashboard(LoginRequiredMixin, View):
 class EventAjax(View):
     template_name = 'templates/dashboard.html'
     
+    
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def getFormCode(self, request, *args, **kwargs):
+        forms = SendMergeCalendar()
+        calendar = OurCalendar.objects.get(user=request.user)
+        
+        response_data = {"status": "success", "header":"Usar Codigo", "form":forms.as_p(), "action":"Usar"}
+        
+        return JsonResponse(response_data)
+    
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def postFormCode(self, request, *args, **kwargs):
+        id = request.POST.get('code')
+        return HttpResponseRedirect("/mergeCalendar/{0}".format(id))
+    
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def getCode(self, request, *args, **kwargs):
+        forms = GenerateCode()
+        calendar = OurCalendar.objects.get(user=request.user)
+        forms.fields["code"].initial = calendar.id
+        forms.fields['code'].widget.attrs['disabled'] = True
+        
+        response_data = {"status": "success", "header":"Codigo Gerado", "form":forms.as_p(), "action":"Ok"}
+        
+        return JsonResponse(response_data)
+    
     @classmethod
     @method_decorator(ensure_csrf_cookie)
     def excludeEvent(self, request, *args, **kwargs):
         id = request.POST.get('id')
         calendar = OurCalendar.objects.get(user=request.user)
-        print(Events.objects.filter(id=id,calendar=calendar).delete())
         
         response_data = {"status": "success"}
         

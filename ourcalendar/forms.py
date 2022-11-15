@@ -45,3 +45,11 @@ class EventAdd(ModelForm):
 class MergeEvents(forms.Form):
     de = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))
     calendario_id = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control', 'id':'recipient-name'}))
+    
+
+class GenerateCode(forms.Form):
+    code = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'code-calendar'}))
+    
+
+class SendMergeCalendar(forms.Form):
+    code = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))

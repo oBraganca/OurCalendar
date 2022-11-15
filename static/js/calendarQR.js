@@ -1,6 +1,5 @@
 
 $(document).ready(function() {
-    console.log(getCookie('csrftoken'))
     
     $(document).on("click", "button[data-attr=gerar-codigo]", function(){
         $.ajax({

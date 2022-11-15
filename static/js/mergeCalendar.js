@@ -1,11 +1,9 @@
 
 $(document).ready(function() {
     id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
-    if (location.protocol !== "https:") {
-        const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+id);
-    }else{
-        const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+id);
-    }
+    
+    
+    const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+id);
   
     chatSocket.onopen = function(message) {
       console.log("open", message);

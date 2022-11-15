@@ -62,8 +62,12 @@
 
 
     
+    if (location.protocol !== "https:") {
+      const chatSocket = new WebSocket('ws://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
+    }else{
+      const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
+    }
   
-    const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
   
     chatSocket.onopen = function(message) {
       console.log("open", message);

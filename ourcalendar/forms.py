@@ -53,3 +53,9 @@ class GenerateCode(forms.Form):
 
 class SendMergeCalendar(forms.Form):
     code = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))
+class SolicitFollow(forms.Form):
+    code_user = forms.CharField(widget=forms.TextInput(attrs={'type':'email','class': 'form-control ', 'id':'solicit-follow', "placeholder":"email@mail.com"}))
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['code_user'].label = ""

@@ -47,7 +47,7 @@
                                                 </div>
                                                 
                                                 <input type="submit" class="btn mt-4" style="padding-top: 8px;" value="Enviar">
-                                                <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Esqueceu sua senha?</a></p>
+                                                {% comment %} <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Esqueceu sua senha?</a></p> {% endcomment %}
                                                 <br>
                                                 {% if form.errors %}
                                                     {% for error in form.non_field_errors %}

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family= Poppins: família= Aberto+Sans &família= Poppins:ital,wght@0,200;0,300;0,500;1,400 & display=swap');
 
 * {
     padding: 0;
@@ -19,7 +20,7 @@ body{
     height: 100vh;
 
     background: linear-gradient(123.71deg, #17191E 101.07%, #74E0EF 101.08%, rgba(116, 224, 239, 0.5) 101.09%, #74E0EF 101.09%);
-
+    font-family: 'Open Sans', sans-serif;
     overflow:auto;
 }
 

@@ -10,22 +10,91 @@
 {%  endblock %}
 {% block content %}
     <div class="p-4">
+        <div class="mb-5 follow position-relative">
+                        
+            
+            <div class="form-div" >
+                <form id="sendRequest">
+                    {% csrf_token %}    
+                    {% crispy form %}
+                    <button class="ml-2 btn btn btn-dark" id="liveToastBtn">Send</button>
+                </form>
+                <span id="message"></span>
+            </div>
+
+            
+        <div aria-live="polite" aria-atomic="true" class="position-absolute start-toast">
+            <!-- Position it: -->
+            <!-- - `.toast-container` for spacing between toasts -->
+            <!-- - `.position-absolute`, `top-0` & `end-0` to position the toasts in the upper right corner -->
+            <!-- - `.p-3` to prevent the toasts from sticking to the edge of the container  -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-header">
+                <img src="..." class="rounded me-2" alt="...">
+                <strong class="me-auto">Bootstrap</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+              <div class="toast-body">
+                See? Just like this.
+              </div>
+            </div>
+        </div>
+            
+            <div class="">
+                <svg width="37" height="37" id="notify" viewBox="0 0 78 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M70.0688 4.03732H8.64743C6.5273 4.03732 4.80859 5.75603 4.80859 7.87616V53.9422C4.80859 56.0623 6.5273 57.781 8.64743 57.781H70.0688C72.1889 57.781 73.9076 56.0623 73.9076 53.9422V7.87616C73.9076 5.75603 72.1889 4.03732 70.0688 4.03732Z" stroke="white" stroke-width="7.67767" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M70.0688 5.95674L39.3581 34.748L8.64746 5.95674" stroke="white" stroke-width="7.67767" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>  
+                <div class="notification">
+                    <span class="mb-3 p-2">Solicitações Pendentes</span>
+                {% if request_list|length > 0 %}
+                    <ul>
+                    {%for request in request_list%}
+                        <li>{{request.email}} 
+                            <div class="action">
+                                <button class="refused" id="{{request.request_.id}}" data-attr="refuse">
+                                    <svg viewBox="0 0 178 178" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 12L166.151 166.151M12 166.151L166.151 12" stroke="white" stroke-width="22.0216" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                                <button class="accept" id="{{request.request_.id}}" data-attr="accept">                                
+                                    <svg viewBox="0 0 172 121" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 60.3837L60.3837 111.767L163.151 9" stroke="white" stroke-width="17.1279" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </li>
+                    {%endfor%}  
+                    </ul>
+                {% else %}
+                    Nem um pedido de amizade.
+                {% endif %}
+                </div>
+                
+            </div>
+        </div>
         {% if calendar_list|length > 0 %}
-        <div class="row row-cols-3">
-        {%for calendar in calendar_list%}
-        <div class="col mt-2">
-            <div class="card bg-dark text-light" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">{{calendar.title}}</h5>
-                    <p class="card-text">{{calendar.belongs}}' Calendar.</p>
-                    <a href="{{calendar.id}}" class="btn btn-primary">Go to Calendar</a>
+            <div class=" mt-5">
+                <div class="row row-cols-3">
+                    {%for calendar in calendar_list%}
+                    <div class="col mt-2">
+                        <div class="card dark-bg text-light" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{calendar.title}}</h5>
+                                <p class="card-text">{{calendar.belongs}}' Calendar.</p>
+                                <a href="{{calendar.id}}" class="btn btn-primary">Go to Calendar</a>
+                            </div>
+                            </div>
+                    </div>
+                    {%endfor%}    
                 </div>
-                </div>
+            </div>
+            {%else%}
+        <div class="no-follow ">
+            Parece que você ainda não segue ninguem.
+            
         </div>
-        {%endfor%}    
-        </div>
-        {%else%}
-            Parece que vc nao segue ninguem
         {%endif%}
         
     </div>

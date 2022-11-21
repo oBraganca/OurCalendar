@@ -9,9 +9,12 @@ class SignInView(View):
     template_name = 'users/account.html'
     form_class = LoginForm
     form_class2 = RegisterForm
+    
     def get(self, request, *args, **kwargs):
         forms = self.form_class()
         forms2 = self.form_class2()
+        if request.user.is_authenticated:
+            return redirect('ourcalendar:template')
         if 'forms2' in request.session:
             forms2 = self.form_class2(request.session['forms2'])
             del request.session['forms2']

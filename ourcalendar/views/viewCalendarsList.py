@@ -1,7 +1,7 @@
 from django.views.generic import View
 from django.shortcuts import render
-from ourcalendar.models import Events, OurCalendar, CalendarFollow
-from ourcalendar.forms import EventAdd
+from ourcalendar.models import Events, OurCalendar, CalendarFollow, RequestCalendarFollow
+from ourcalendar.forms import EventAdd, SolicitFollow
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
@@ -9,8 +9,7 @@ from users.models import CustomUser
 
 class ListTemplateView(LoginRequiredMixin, View):
     template_name = 'template/calendarios.html'
-
-
+    form = SolicitFollow()
     login_url = '/account/'
 
 
@@ -23,6 +22,8 @@ class ListTemplateView(LoginRequiredMixin, View):
         
         calendar = OurCalendar.objects.get(user=request.user)
         
+        requests = RequestCalendarFollow.objects.all().prefetch_related("follower").filter(calendar = calendar).order_by('id')
+        
         users = CalendarFollow.objects.all().prefetch_related("follower").filter(calendar = calendar).order_by('id')[:2]
         user_main = CustomUser.objects.get(email = calendar.user.email) 
         
@@ -33,6 +34,17 @@ class ListTemplateView(LoginRequiredMixin, View):
                     "title": calendar.name,
                     "belongs": calendar.user.email,
                     "id": calendar.id,
+                }
+            )
+        
+        
+        requests_list = []
+        
+        for request_ in requests:
+            requests_list.append(
+                {   
+                    "email": request_.follower.email,
+                    "request_":request_,
                 }
             )
         
@@ -56,7 +68,10 @@ class ListTemplateView(LoginRequiredMixin, View):
                 }
             )
 
-        context = {'calendar_list': calendar_list, 'user_info':user_, "pictureProfile":picture_profile, "domain":request.META['HTTP_HOST'], "belongs":"Meu Calendario", "users":users_list}
+        context = {'calendar_list': calendar_list, 'user_info':user_, 
+                   "pictureProfile":picture_profile, "domain":request.META['HTTP_HOST'], 
+                   "belongs":"Meu Calendario", "users":users_list,
+                   "request_list":requests_list, 'form':self.form}
 
         return render(request, self.template_name, context)
     

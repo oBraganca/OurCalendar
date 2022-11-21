@@ -48,7 +48,7 @@
     var calendar;
 
   
-    const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
+    const chatSocket = new WebSocket('ws://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
   
     chatSocket.onopen = function(message) {
       console.log("open", message);
@@ -149,15 +149,6 @@
               
             }
           },
-
-          removeEvent:{
-            text: 'Evento-',
-            click: function() {
-              var id = prompt('digie o id do evento que será excluido.');
-              var evento = calendar.getEventById(id)
-              evento.remove();
-            }
-          }
         
         {%endif%}
 
@@ -168,7 +159,7 @@
         headerToolbar: {
           left: 'today viw addEvent',
           center: 'title',
-          right: 'removeEvent prev,next'
+          right: 'prev,next'
         },
       {%else%}
         headerToolbar: {

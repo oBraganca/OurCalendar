@@ -112,8 +112,10 @@ class MergeCalendar(LoginRequiredMixin, View):
             calendar = OurCalendar.objects.get(user = request.user)
             for event in events:
                 # eventTest = Events.objects.filter(calendar__in=str(calendar.id), date_end__gte=datetime.datetime.now()).exclude(unic_code = event.unic_code)
-                eventTest = Events.objects.filter(calendar__in=str(calendar.id), unic_code = event.unic_code)        
+                eventTest = Events.objects.filter(calendar=calendar, unic_code = event.unic_code)        
+                print(calendar.id)
                 if not eventTest:
+                    print("a")
                     Events.objects.create(name=event.name, description=event.description, date_start = event.date_start, date_end = event.date_end, calendar = calendar, origim = event.origim, unic_code=event.unic_code)
 
         return redirect('/')

@@ -1,7 +1,7 @@
 
 from django.views.generic import View
 from django.shortcuts import render
-from ourcalendar.models import Events, OurCalendar, CalendarFollow
+from ourcalendar.models import Events, OurCalendar, CalendarFollow, RequestCalendarFollow
 from ourcalendar.forms import EventAdd, GenerateCode, SendMergeCalendar
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
@@ -68,6 +68,59 @@ class TemplateDashboard(LoginRequiredMixin, View):
 class EventAjax(View):
     template_name = 'templates/dashboard.html'
     
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def followCalendar(self, request, *args, **kwargs):
+        email = request.POST.get('email')
+        print(request.POST.get('email'))
+        user = CustomUser.objects.get(email=email)
+        calendar = OurCalendar.objects.get(user=user)
+        status = "error"
+        message = "Usuario não encontrado"
+        check = RequestCalendarFollow.objects.filter(calendar=calendar, follower = request.user)
+        if user == request.user:
+            status = "error"
+            message = "Usuario não encontrado."
+            response_data = {"status": status, "message":message}
+            return JsonResponse(response_data)
+            
+        if check:
+            status = "error"
+            message = "Solicitação ja foi enviada a esse usuario"
+            response_data = {"status": status, "message":message}
+            return JsonResponse(response_data)
+        
+        if calendar:
+            RequestCalendarFollow.objects.create(calendar=calendar, follower = request.user)
+            message = "Solicitação enviado com sucesso"
+            status = "success"
+        
+        
+        response_data = {"status": status, "message":message}
+        return JsonResponse(response_data)
+    
+    
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def acceptUser(self, request, *args, **kwargs):
+        id = request.POST.get('id')
+        requests = RequestCalendarFollow.objects.get(id = id)
+        CalendarFollow.objects.create(follower=requests.follower, calendar=requests.calendar)
+        requests.delete()
+
+        response_data = {"status": "success"}
+        
+        return JsonResponse(response_data)
+    
+    @classmethod
+    @method_decorator(ensure_csrf_cookie)
+    def refuseUser(self, request, *args, **kwargs):
+        id = request.POST.get('id')
+        requests = RequestCalendarFollow.objects.get(id = id)
+        requests.delete()
+        
+        response_data = {"status": "success"}
+        return JsonResponse(response_data)
     
     @classmethod
     @method_decorator(ensure_csrf_cookie)
@@ -101,8 +154,7 @@ class EventAjax(View):
     @method_decorator(ensure_csrf_cookie)
     def excludeEvent(self, request, *args, **kwargs):
         id = request.POST.get('id')
-        calendar = OurCalendar.objects.get(user=request.user)
-        
+        Events.objects.filter(pk=id).delete()
         response_data = {"status": "success"}
         
         return JsonResponse(response_data)

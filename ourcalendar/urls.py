@@ -17,6 +17,9 @@ urlpatterns = [
     path('mergeCalendar/<int:id>',views.MergeCalendar.as_view(), name="template"),
     path("mergedCalendar/", views.MergeCalendar.as_view(), name="newEvent"),
     
+    path("acceptUser/", views.EventAjax.acceptUser, name="acceptUser"),
+    path("refuseUser/", views.EventAjax.refuseUser, name="refuseUser"),
+    path("follow-calendar/", views.EventAjax.followCalendar, name="followCalendar"),
     path("getForm/", views.EventAjax.getForm),
     path("getInfo/", views.EventAjax.getInfo),
     path("getCodeMerge/", views.EventAjax.getCode),

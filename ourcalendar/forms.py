@@ -37,7 +37,7 @@ class EventAdd(ModelForm):
                 attrs={"type": "datetime-local", "class": "form-control mb-3"}
             ),
             "date_end": DateInput(
-                attrs={"type": "datetime-local", "class": "form-control mb-3"}
+                attrs={"type": "datetime-local", "class": "form-control mb-3","required":True,}
             ),
         }
         access = forms.ChoiceField(choices=ACCESS)

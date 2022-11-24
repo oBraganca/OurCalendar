@@ -107,16 +107,25 @@ class MergeCalendar(LoginRequiredMixin, View):
         if forms.is_valid():
             email_ = forms.cleaned_data["de"]
             calendario_id = forms.cleaned_data["calendario_id"]
-            events = Events.objects.filter(calendar__in=calendario_id)
+            events = Events.objects.filter(calendar__in=calendario_id).exclude(access='PV')
 
             calendar = OurCalendar.objects.get(user = request.user)
+            
+            qnt = 0
+            
             for event in events:
                 # eventTest = Events.objects.filter(calendar__in=str(calendar.id), date_end__gte=datetime.datetime.now()).exclude(unic_code = event.unic_code)
                 eventTest = Events.objects.filter(calendar=calendar, unic_code = event.unic_code)        
-                print(calendar.id)
                 if not eventTest:
-                    print("a")
-                    Events.objects.create(name=event.name, description=event.description, date_start = event.date_start, date_end = event.date_end, calendar = calendar, origim = event.origim, unic_code=event.unic_code)
+                    qnt = 1
+                    print(qnt)
+                    Events.objects.create(name=event.name, description=event.description, date_start = event.date_start, date_end = event.date_end, calendar = calendar, origim = event.origim, unic_code=event.unic_code, access = event.access)
 
+            if qnt > 0:
+                ourcalendar = OurCalendar.objects.get(id = calendario_id)
+                print( ourcalendar.qnt_merge)
+                ourcalendar.qnt_merge = ourcalendar.qnt_merge + qnt
+                print( ourcalendar.qnt_merge)
+                ourcalendar.save()
         return redirect('/')
 

@@ -78,7 +78,7 @@
   
     document.querySelector('#createEvent').onclick = function(e) {
         
-        e.preventDefault();
+        
   
         var title = $("input[name='name']").val();
         var description = $("textarea[name='description']").val();
@@ -86,18 +86,32 @@
         var date_end = $("input[name='date_end']").val();
         var access = $("select[name='access'] option:selected").val();
   
+        
+        if(access != "" && description != "" && date_start != "" && date_end != "" && access != ""){
+          chatSocket.send(JSON.stringify({
+              'title': title,
+              'description': description,
+              'date_start': date_start,
+              'date_end': date_end,
+              'access': access,
+              'idcalendar': {{idC}}
+          }));
+
+          
+          $('#exampleModal').modal('hide');
   
-        chatSocket.send(JSON.stringify({
-            'title': title,
-            'description': description,
-            'date_start': date_start,
-            'date_end': date_end,
-            'access': access,
-            'idcalendar': {{idC}}
-        }));
-  
+          $("input[name='name']").val(null);
+          $("textarea[name='description']").val(null);
+          $("input[name='date_start']").val(null);
+          $("input[name='date_end']").val(null);
+          $("select[name='access'] option:selected").prop("selected", false);
+          $("select[name='access'] option[value='']").prop('selected', true);
+        }
+
+        e.preventDefault();
   
         return false
+  
     };
 
 

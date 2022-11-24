@@ -81,7 +81,7 @@ class TemplateViewFollow(LoginRequiredMixin, View):
         self.id = self.kwargs.get("id")
 
         calendar = OurCalendar.objects.get(id=self.id)
-        events = Events.objects.filter(calendar=calendar)
+        events = Events.objects.filter(calendar=calendar).exclude(access='PV')
         
         
         users = CalendarFollow.objects.all().prefetch_related("follower").filter(calendar = calendar).order_by('id')[:2]
@@ -126,6 +126,7 @@ class TemplateViewFollow(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
     
 
+# COM O WEB SOCKET ESSA FUNÇÂO FICOU INUTIL
 def create_event(request):
     form = EventAdd(request.POST or None)
 
@@ -134,8 +135,9 @@ def create_event(request):
         description = form.cleaned_data["description"]
         start_time = form.cleaned_data["date_start"]
         end_time = form.cleaned_data["date_end"]
+        access = form.cleaned_data["access"]
         calendar = OurCalendar.objects.get(user=request.user)
-
+        
         Events.objects.create(
             name=title,
             description=description,
@@ -143,6 +145,7 @@ def create_event(request):
             date_end=end_time,
             calendar=calendar,
             origim=calendar,
+            access=access,
 
         )
         return HttpResponseRedirect(reverse("ourcalendar:template"))
@@ -159,6 +162,7 @@ def edit_event(request):
         description = form.cleaned_data["description"]
         start_time = form.cleaned_data["date_start"]
         end_time = form.cleaned_data["date_end"]
+        access = form.cleaned_data["access"]
 
         Events.objects.filter(
             id = id,
@@ -168,6 +172,7 @@ def edit_event(request):
             description=description,
             date_start=start_time,
             date_end=end_time,
+            access = access,
             
         )
         

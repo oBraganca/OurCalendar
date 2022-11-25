@@ -60,7 +60,8 @@ class TemplateDashboard(LoginRequiredMixin, View):
                     'ending':qnt_end, 
                     'events': events,
                     "belongs":"Meu Calendario",
-                    "users":users_list
+                    "users":users_list,
+                    "idC":calendar.id
                     }
 
         return render(request, self.template_name, context)

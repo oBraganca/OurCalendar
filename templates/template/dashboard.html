@@ -106,8 +106,8 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-success" value="Salvar Mudanças">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-success" id="createEvent"  value="Salvar Mudanças">
+                    <button type="button" class="btn btn-secondary"data-dismiss="modal">Close</button>
                 </div>  
             </form>
           </div>
@@ -126,10 +126,83 @@
             <div class="modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-secondary"data-dismiss="modal">Fechar</button>
                 <input type="submit" id="excludeEvent" class="btn btn-danger" value="Excluir">
             </div>
             </div>
         </div>
-    </div>
+    </div><script>
+
+        const chatSocket = new WebSocket('wss://'+ window.location.host+'/ws/sendEvent/'+{{idC}});
+  
+    chatSocket.onopen = function(message) {
+      console.log("open", message);
+    }
+  
+    chatSocket.onerror = function(message) {
+        console.log("error", message);
+    }
+  
+    chatSocket.onclose = function(message) {
+        console.log("close", message);
+    }
+  
+  
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.mode=="update") {
+            $('#modal').modal('hide');
+    
+            $("input[name='name']").val(null);
+            $("textarea[name='description']").val(null);
+            $("input[name='date_start']").val(null);
+            $("input[name='date_end']").val(null);
+            $("select[name='access'] option:selected").prop("selected", false);
+            $("select[name='access'] option[value='']").prop('selected', true);
+            
+        }
+  
+    };
+  
+    document.querySelector('#createEvent').onclick = function(e) {
+        
+        var title = $("input[name='name']").val();
+        var description = $("textarea[name='description']").val();
+        var date_start = $("input[name='date_start']").val();
+        var date_end = $("input[name='date_end']").val();
+        var access = $("select[name='access'] option:selected").val();
+  
+        date = new Date();
+        if(!(Date.parse(date_start) > Date.parse(date_end))){
+          if(access != "" && description != "" && date_start != "" && date_end != "" && access != ""){
+              
+            idEvent = $("input[name='data']").attr("id");
+            chatSocket.send(JSON.stringify({
+                'title': title,
+                'description': description,
+                'date_start': date_start,
+                'date_end': date_end,
+                'access': access,
+                'idcalendar': {{idC}},
+                'type':'edited',
+                "idevent":idEvent,
+            }));
+          }
+        }else{
+          $("input[name='date_start']").addClass('is-invalid')
+          $("input[name='date_end']").addClass('is-invalid')
+          alert('Data de "End" não pode ser anterior à data "Start".')
+
+        }
+        
+
+  
+        e.preventDefault();
+        return false
+  
+    };
+    
+      
+</script>
+
 {% endblock %}

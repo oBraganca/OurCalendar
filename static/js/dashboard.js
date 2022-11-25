@@ -8,16 +8,22 @@ $(document).ready(function() {
     
     
     $(document).on("click", "button[data-attr=edit]", function(){
+        id = $(this).attr("id")
         $.ajax({
             type:"POST",
             url: "/getForm/",
             mode: 'same-origin',
-            data: {"id": $(this).attr("id")},          
+            data: {"id": id},          
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'))
             },
         }).done(function(data) {
+            var input = document.createElement("input");
+            input.setAttribute("id", id);
+            input.setAttribute("name", "data");
+
             $('#modal .modal-body').empty()
+            $('#modal .modal-body').append(input);
             $('#modal .modal-body').append(data);
             $('#modal').modal('show');
         });

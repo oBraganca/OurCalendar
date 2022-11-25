@@ -40,12 +40,14 @@ class RegisterForm(forms.Form):
     def clean(self):
         errors = []
         password1 = self.cleaned_data.get("password")
+        email = self.cleaned_data.get("email")
         password2 = self.cleaned_data.get("confirmPassword")
+        user = CustomUser.objects.filter(email = email)
+        if len(user):
+            raise ValidationError("Já existe uma conta com esse email.")
         if password1 and password2 and password1 != password2:
-            errors.append(ValidationError("As senhas não são iguais, tente novamente."))
-            
-        if errors:
             raise ValidationError("As senhas não são iguais, tente novamente.")
+        
         
         return password2
 

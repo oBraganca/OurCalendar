@@ -3,7 +3,8 @@ from django.forms import DateInput, ModelForm
 from django.utils.translation import gettext_lazy as _
 from .models import Events
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, MultiField, Div, Row, Column
+from django.core.exceptions import ValidationError
+import datetime
 
 ACCESS = (
     ('PB', 'Public'),
@@ -34,13 +35,24 @@ class EventAdd(ModelForm):
                 }
             ),
             "date_start": DateInput(
-                attrs={"type": "datetime-local", "class": "form-control mb-3"}
+                attrs={"type": "datetime-local", "class": "form-control mb-3", 'min': datetime.datetime.now()}
             ),
             "date_end": DateInput(
                 attrs={"type": "datetime-local", "class": "form-control mb-3","required":True,}
             ),
         }
         access = forms.ChoiceField(choices=ACCESS)
+        
+    # def clean(self):
+    #     date_start = self.cleaned_data.get("date_start")
+    #     date_end = self.cleaned_data.get("date_end")
+    #     if date_start < datetime.datetime.now():
+    #         raise ValidationError("Já existe uma conta com esse email.")
+    #     if date_end < datetime.datetime.now():
+    #         raise ValidationError("As senhas não são iguais, tente novamente.")
+        
+        
+    #     return password2
 
 class MergeEvents(forms.Form):
     de = forms.CharField(widget=forms.TextInput(attrs={'type':'text','class': 'form-control mb-3', 'id':'recipient-name'}))

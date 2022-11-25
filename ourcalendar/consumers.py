@@ -5,6 +5,8 @@ from asgiref.sync import sync_to_async, async_to_sync
 from channels.layers import get_channel_layer
 from ourcalendar.models import *
 import _thread
+
+import datetime
 channel_layer = get_channel_layer()
 
 class CalendarConsumer(WebsocketConsumer):
@@ -36,26 +38,44 @@ class CalendarConsumer(WebsocketConsumer):
         date_end = data['date_end']
         access = data['access']
         idcalendar = data['idcalendar']
+        type = data['type']
         
-        self.save_message(title, description, date_start, date_end, access, idcalendar),
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'calendar_message',
-                'title': title,
-                'description': description,
-                'date_start': date_start,
-                'date_end': date_end,
-                'access': access
-            },
-        )
+        if type == "edited":
+            self.update_message(title, description, date_start, date_end, access, idcalendar, data['idevent'])
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'calendar_message',
+                    'title': title,
+                    'description': description,
+                    'date_start': date_start,
+                    'date_end': date_end,
+                    'access': access,
+                    'mode': 'update'
+                },
+            )
+        else:        
+            self.save_message(title, description, date_start, date_end, access, idcalendar),
+        
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'calendar_message',
+                    'title': title,
+                    'description': description,
+                    'date_start': date_start,
+                    'date_end': date_end,
+                    'access': access,
+                    'mode': 'create'
+                },
+            )
         
     def calendar_message(self, data):
         title = data['title']
         description = data['description']
         date_start = data['date_start']
         date_end = data['date_end']
-        access = data['access']
+        mode = data['mode']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
@@ -64,6 +84,7 @@ class CalendarConsumer(WebsocketConsumer):
             'start': date_start,
             'end': date_end,
             # 'access': access
+            'mode': mode
         }))
     
     def save_message(self, title, description, date_start, date_end, access, idcalendar):
@@ -77,4 +98,17 @@ class CalendarConsumer(WebsocketConsumer):
             origim=idcalendar,
             access=access,
 
+        )
+        
+    def update_message(self, title, description, date_start, date_end, access, idcalendar, idevent):
+        idcalendar= OurCalendar.objects.get(id=idcalendar)
+        print(idevent)
+        Events.objects.filter(
+            id = idevent, 
+        ).update(
+            name=title,
+            description=description,
+            date_start=date_start,
+            date_end=date_end,
+            access = access,
         )

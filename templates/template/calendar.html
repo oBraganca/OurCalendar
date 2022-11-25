@@ -65,39 +65,9 @@
   
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-  
-        if (data) {
+        if (data.mode=="create") {
           calendar.addEvent(data);
           calendar.render();
-          
-        } else {
-            alert('The message was empty!')
-        }
-  
-    };
-  
-    document.querySelector('#createEvent').onclick = function(e) {
-        
-        
-  
-        var title = $("input[name='name']").val();
-        var description = $("textarea[name='description']").val();
-        var date_start = $("input[name='date_start']").val();
-        var date_end = $("input[name='date_end']").val();
-        var access = $("select[name='access'] option:selected").val();
-  
-        
-        if(access != "" && description != "" && date_start != "" && date_end != "" && access != ""){
-          chatSocket.send(JSON.stringify({
-              'title': title,
-              'description': description,
-              'date_start': date_start,
-              'date_end': date_end,
-              'access': access,
-              'idcalendar': {{idC}}
-          }));
-
-          
           $('#exampleModal').modal('hide');
   
           $("input[name='name']").val(null);
@@ -106,10 +76,42 @@
           $("input[name='date_end']").val(null);
           $("select[name='access'] option:selected").prop("selected", false);
           $("select[name='access'] option[value='']").prop('selected', true);
+          
         }
-
-        e.preventDefault();
   
+    };
+  
+    document.querySelector('#createEvent').onclick = function(e) {
+        
+        var title = $("input[name='name']").val();
+        var description = $("textarea[name='description']").val();
+        var date_start = $("input[name='date_start']").val();
+        var date_end = $("input[name='date_end']").val();
+        var access = $("select[name='access'] option:selected").val();
+  
+        date = new Date();
+        if(!(Date.parse(date_start) > Date.parse(date_end))){
+          if(access != "" && description != "" && date_start != "" && date_end != "" && access != ""){
+            chatSocket.send(JSON.stringify({
+                'title': title,
+                'description': description,
+                'date_start': date_start,
+                'date_end': date_end,
+                'access': access,
+                'idcalendar': {{idC}},
+                'type':'create'
+            }));
+          }
+        }else{
+          $("input[name='date_start']").addClass('is-invalid')
+          $("input[name='date_end']").addClass('is-invalid')
+          alert('Data de "End" não pode ser anterior à data "Start".')
+
+        }
+        
+
+  
+        e.preventDefault();
         return false
   
     };
@@ -184,17 +186,6 @@
       {%endif%}
 
       events:event,
-      
-      eventClick: function(info) {
-        alert('Titulo: ' + info.event.title);
-        alert('Começo: ' + info.event.start);
-        alert('ID: ' + info.event.id);
-        alert('Descrição: ' + info.event.extendedProps.description);
-        alert('Departamento: ' + info.event.extendedProps.department);
-        alert('id_calendario_pertecente: ' + info.event.id_calendario_pertecente);
-        
-       
-      },
               
     }));
     calendarios.push(calendar1 = new FullCalendar.Calendar(calendarEl,{
